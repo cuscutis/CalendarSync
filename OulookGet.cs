@@ -34,29 +34,40 @@ namespace CalendarSync
             {
                 if (item.IsRecurring)
                 {
-                    Microsoft.Office.Interop.Outlook.RecurrencePattern rp = item.GetRecurrencePattern();
-                    DateTime first = new DateTime(DateTime.Now.Year, DateTime.Now.Month, item.Start.Day, item.Start.Hour, item.Start.Minute, item.Start.Second).AddDays(RecurStartOffsetDays);
-                    DateTime last = DateTime.Now.AddDays(RecurEndOffsetDays);
-
-                    for (DateTime cur = first; cur <= last; cur = cur.AddMinutes(RecurIntervalCheckMinutes))
+                    try
                     {
-                        try
+                        Microsoft.Office.Interop.Outlook.RecurrencePattern rp = item.GetRecurrencePattern();
+                        DateTime first =
+                            new DateTime(DateTime.Now.Year, DateTime.Now.Month, item.Start.Day, item.Start.Hour,
+                                item.Start.Minute, item.Start.Second).AddDays(RecurStartOffsetDays);
+                        DateTime last = DateTime.Now.AddDays(RecurEndOffsetDays);
+
+                        for (DateTime cur = first; cur <= last; cur = cur.AddMinutes(RecurIntervalCheckMinutes))
                         {
-                            Microsoft.Office.Interop.Outlook.AppointmentItem recur = rp.GetOccurrence(cur);
-                            result.Add(new OutlookItem
+                            try
                             {
-                                EntryID = recur.EntryID + recur.Start.ToString(":yyyy-MM-dd"),
-                                Subject = recur.Subject,
-                                Location = recur.Location,
-                                Start = recur.Start,
-                                Duration = recur.Duration
-                            });
+                                Microsoft.Office.Interop.Outlook.AppointmentItem recur = rp.GetOccurrence(cur);
+                                result.Add(new OutlookItem
+                                {
+                                    EntryID = recur.EntryID + recur.Start.ToString(":yyyy-MM-dd"),
+                                    Subject = recur.Subject,
+                                    Location = recur.Location,
+                                    Start = recur.Start,
+                                    Duration = recur.Duration
+                                });
+                            }
+                            catch (Exception)
+                            {
+                                // this looks bad, but the expected way to find recurrances is to try to create one and if it fails, it throws an exception
+                                Console.Write("");
+                            }
                         }
-                        catch (Exception)
-                        {
-                            // this looks bad, but the expected way to find recurrances is to try to create one and if it fails, it throws an exception
-                            Console.Write("");
-                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.Write("{0} {1} {2} {3}", item.Start.Day, item.Start.Hour, item.Start.Minute,
+                            item.Start.Second);
+                        continue;
                     }
                 }
                 else
