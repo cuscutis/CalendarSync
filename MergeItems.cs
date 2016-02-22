@@ -26,7 +26,9 @@ namespace CalendarSync
                 if (eventItem.ExtendedProperties == null) continue;
                 if (eventItem.ExtendedProperties.Private__.ContainsKey(gCalendar.OutlookEntryId))
                 {
-                    previouslyMergedEvents.Add(eventItem.ExtendedProperties.Private__[gCalendar.OutlookEntryId], eventItem);
+                    if (!previouslyMergedEvents.ContainsKey(eventItem.ExtendedProperties.Private__[gCalendar.OutlookEntryId])) {
+                        previouslyMergedEvents.Add(eventItem.ExtendedProperties.Private__[gCalendar.OutlookEntryId], eventItem);
+                    }
                 }
             }
             foreach (OutlookItem fromItem in fromItems)

@@ -61,7 +61,7 @@ namespace CalendarSync
 
             // Define parameters of request.
             EventsResource.ListRequest request = _service.Events.List(DefaultCalendarId);
-            request.TimeMin = DateTime.Now.AddDays(-1.0);
+            request.TimeMin = DateTime.Now.AddDays(-5.0);
             request.TimeMax = DateTime.Now.AddDays(30.0);
             request.ShowDeleted = false;
             request.SingleEvents = true;
