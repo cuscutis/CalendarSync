@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace CalendarSync
 {
@@ -55,7 +56,7 @@ namespace CalendarSync
         /// Get list of Calendar Items from yesterday to 30 days from now
         /// </summary>
         /// <returns>A List of Events</returns>
-        public List<Event> GetCalendarItems()
+        public async Task<List<Event>> GetCalendarItems()
         {
             var result = new List<Event>();
 

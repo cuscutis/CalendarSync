@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Dynamic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Google.Apis.Calendar.v3.Data;
 
@@ -15,11 +12,23 @@ namespace CalendarSync
             try
             {
                 var outlookCalendar = new OulookGet();
-                var outlookItems = outlookCalendar.GetCalendarItems();
 
                 var gCalendar = new GoogleCalendarGet();
                 gCalendar.Init();
-                var items = gCalendar.GetCalendarItems();
+
+                var tasks = new List<Task>
+                {
+                    outlookCalendar.GetCalendarItems(),
+                    gCalendar.GetCalendarItems()
+                };
+                Task.WhenAll(tasks);
+
+                var oTask = tasks[0] as Task<List<OutlookItem>>;
+                var gTask = tasks[1] as Task<List<Event>>;
+                if (oTask == null || gTask == null) return;
+
+                var outlookItems = oTask.Result;
+                var items = gTask.Result;
 
                 MergeItems.Merge(gCalendar, outlookItems, items);
             }

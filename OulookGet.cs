@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.Office.Interop.Outlook;
+using Exception = System.Exception;
 
 namespace CalendarSync
 {
@@ -16,13 +19,9 @@ namespace CalendarSync
         /// 
         /// </summary>
         /// <returns></returns>
-        public List<OutlookItem> GetCalendarItems()
+        public async Task<List<OutlookItem>> GetCalendarItems()
         {
             var result = new List<OutlookItem>();
-            Microsoft.Office.Interop.Outlook.Application oApp = null;
-            Microsoft.Office.Interop.Outlook.NameSpace mapiNamespace = null;
-            Microsoft.Office.Interop.Outlook.MAPIFolder calendarFolder = null;
-            Microsoft.Office.Interop.Outlook.Items outlookCalendarItems = null;
 
             // Set start value
             DateTime start = DateTime.Today.AddMonths(-3);
@@ -31,10 +30,10 @@ namespace CalendarSync
             // Initial restriction is Jet query for date range
             string filter = "[Start] >= '" + start.ToString("g") + "' AND [End] <= '" + end.ToString("g") + "'";
 
-            oApp = new Microsoft.Office.Interop.Outlook.Application();
-            mapiNamespace = oApp.GetNamespace("MAPI"); 
-            calendarFolder = mapiNamespace.GetDefaultFolder(Microsoft.Office.Interop.Outlook.OlDefaultFolders.olFolderCalendar); 
-            outlookCalendarItems = calendarFolder.Items.Restrict(filter);
+            var oApp = new Microsoft.Office.Interop.Outlook.Application();
+            var mapiNamespace = oApp.GetNamespace("MAPI"); 
+            var calendarFolder = mapiNamespace.GetDefaultFolder(Microsoft.Office.Interop.Outlook.OlDefaultFolders.olFolderCalendar); 
+            var outlookCalendarItems = calendarFolder.Items.Restrict(filter);
             outlookCalendarItems.IncludeRecurrences = true;
 
             foreach (Microsoft.Office.Interop.Outlook.AppointmentItem item in outlookCalendarItems)
@@ -70,11 +69,9 @@ namespace CalendarSync
                             }
                         }
                     }
-                    catch (Exception ex)
+                    catch
                     {
-                        Console.Write("{0} {1} {2} {3}", item.Start.Day, item.Start.Hour, item.Start.Minute,
-                            item.Start.Second);
-                        continue;
+                        Console.Write("{0} {1} {2} {3}", item.Start.Day, item.Start.Hour, item.Start.Minute, item.Start.Second);
                     }
                 }
                 else
