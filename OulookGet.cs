@@ -24,10 +24,17 @@ namespace CalendarSync
             Microsoft.Office.Interop.Outlook.MAPIFolder calendarFolder = null;
             Microsoft.Office.Interop.Outlook.Items outlookCalendarItems = null;
 
+            // Set start value
+            DateTime start = DateTime.Today.AddMonths(-3);
+            // Set end value
+            DateTime end = DateTime.Today.AddDays(30);
+            // Initial restriction is Jet query for date range
+            string filter = "[Start] >= '" + start.ToString("g") + "' AND [End] <= '" + end.ToString("g") + "'";
+
             oApp = new Microsoft.Office.Interop.Outlook.Application();
             mapiNamespace = oApp.GetNamespace("MAPI"); 
             calendarFolder = mapiNamespace.GetDefaultFolder(Microsoft.Office.Interop.Outlook.OlDefaultFolders.olFolderCalendar); 
-            outlookCalendarItems = calendarFolder.Items;
+            outlookCalendarItems = calendarFolder.Items.Restrict(filter);
             outlookCalendarItems.IncludeRecurrences = true;
 
             foreach (Microsoft.Office.Interop.Outlook.AppointmentItem item in outlookCalendarItems)
