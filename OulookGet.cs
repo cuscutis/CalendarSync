@@ -24,7 +24,7 @@ namespace CalendarSync
             var result = new List<OutlookItem>();
 
             // Set start value
-            DateTime start = DateTime.Today.AddMonths(-3);
+            DateTime start = DateTime.Today.AddMonths(-6);
             // Set end value
             DateTime end = DateTime.Today.AddDays(30);
             // Initial restriction is Jet query for date range
@@ -44,12 +44,25 @@ namespace CalendarSync
                     {
                         Microsoft.Office.Interop.Outlook.RecurrencePattern rp = item.GetRecurrencePattern();
                         DateTime first =
-                            new DateTime(DateTime.Now.Year, DateTime.Now.Month, item.Start.Day, item.Start.Hour,
+                            new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, item.Start.Hour,
                                 item.Start.Minute, item.Start.Second).AddDays(RecurStartOffsetDays);
                         DateTime last = DateTime.Now.AddDays(RecurEndOffsetDays);
 
                         for (DateTime cur = first; cur <= last; cur = cur.AddMinutes(RecurIntervalCheckMinutes))
                         {
+                            if (cur.DayOfWeek == DayOfWeek.Saturday || cur.DayOfWeek == DayOfWeek.Sunday)
+                            {
+                                continue;
+                            }
+
+                            if (cur.Hour > 0 && cur.Hour < 8)
+                            {
+                                continue;
+                            }
+                            if (cur.Hour > 18 && cur.Hour < 24)
+                            {
+                                continue;
+                            }
                             try
                             {
                                 Microsoft.Office.Interop.Outlook.AppointmentItem recur = rp.GetOccurrence(cur);
@@ -65,7 +78,7 @@ namespace CalendarSync
                             catch (Exception)
                             {
                                 // this looks bad, but the expected way to find recurrances is to try to create one and if it fails, it throws an exception
-                                Console.Write("");
+                                //Console.Write("");
                             }
                         }
                     }

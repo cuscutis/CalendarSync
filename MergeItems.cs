@@ -80,15 +80,15 @@ namespace CalendarSync
                 }
                 previouslyMergedEvents.Remove(item.EntryID);
             }
-            Console.WriteLine("  Deleting {0} items in Google Calendar", previouslyMergedEvents.Count);
-            foreach (KeyValuePair<string, Event> valuePair in previouslyMergedEvents)
-            {
-                if (valuePair.Value.Start.DateTime > DateTime.Now)
-                {
-                    Console.WriteLine("    {0}", valuePair.Value.Summary);
-                    gCalendar.DeleteEvent(valuePair.Value);
-                }
-            }
+            //Console.WriteLine("  Deleting {0} items in Google Calendar", previouslyMergedEvents.Count);
+            //foreach (KeyValuePair<string, Event> valuePair in previouslyMergedEvents)
+            //{
+            //    if (valuePair.Value.Start.DateTime > DateTime.Now)
+            //    {
+            //        Console.WriteLine("    {0}", valuePair.Value.Summary);
+            //        gCalendar.DeleteEvent(valuePair.Value);
+            //    }
+            //}
         }
 
     }
